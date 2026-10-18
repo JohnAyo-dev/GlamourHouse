@@ -6,6 +6,13 @@
   <title>Glamour House — GH</title>
   <meta name="description" content="Glamour House (GH) — a home for fashion-inclined people. Shoots, ideas, and what's coming next." />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <script>
+    try {
+      var t = localStorage.getItem("gh_theme");
+      if (t !== "light" && t !== "dark") t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = t;
+    } catch (e) { document.documentElement.dataset.theme = "light"; }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
@@ -24,6 +31,10 @@
       <a href="#ideas">Mood Board</a>
       <a href="#cufs">GH × CUFS</a>
       <a href="#launch" class="nav-cta">Launch</a>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8z"/></svg>
+      </button>
     </nav>
   </header>
 
@@ -76,7 +87,7 @@
           <div class="timeline-card">
             <div class="timeline-meta">
               <span class="step">Step 01</span>
-              <span class="status status-done">Done</span>
+              <span class="status status-next">Next Up</span>
             </div>
             <h3>Picnic Shoot</h3>
             <p>The opener. Soft light, open air, first looks on camera.</p>
@@ -91,7 +102,7 @@
           <div class="timeline-card">
             <div class="timeline-meta">
               <span class="step">Step 02</span>
-              <span class="status status-next">Next up</span>
+              <span class="status status-upcoming">Next up</span>
             </div>
             <h3>Skateboard Community</h3>
             <p>Street energy meets GH styling — shooting with the skate crew.</p>

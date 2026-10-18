@@ -379,4 +379,22 @@
   } else {
     revealTargets.forEach((el) => el.classList.add("is-visible"));
   }
+  /* ================= THEME TOGGLE ================= */
+  const themeToggle = document.getElementById("theme-toggle");
+  const syncThemeBtn = () => {
+    const isDark = document.documentElement.dataset.theme === "dark";
+    themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+    themeToggle.setAttribute("title", isDark ? "Light mode" : "Dark mode");
+  };
+  themeToggle.addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem("gh_theme", next);
+    } catch {
+      /* storage unavailable — session-only */
+    }
+    syncThemeBtn();
+  });
+  syncThemeBtn();
 })();

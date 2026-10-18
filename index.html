@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glamour House — GH</title>
+  <meta name="description" content="Glamour House (GH) — a home for fashion-inclined people. Shoots, ideas, and what's coming next." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <header class="site-header" id="top">
+    <a href="#top" class="brand" aria-label="Glamour House home">
+      <span class="brand-mark">GH</span>
+      <span class="brand-name">Glamour House</span>
+    </a>
+    <!-- Discover the Star . Develop the Craft . Deliver the Glamour -->
+    <nav class="site-nav" aria-label="Primary">
+      <a href="#shoots">Shoots</a>
+      <a href="#ideas">Mood Board</a>
+      <a href="#cufs">GH × CUFS</a>
+      <a href="#launch" class="nav-cta">Launch</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <p class="hero-eyebrow">A home for fashion-inclined people</p>
+      <h1 class="hero-title">
+        <span class="line">Glamour</span>
+        <span class="line line-italic">House</span>
+      </h1>
+      <p class="hero-sub">
+        Shoots, ideas, and community — documented as we build from first concept to launch day.
+      </p>
+      <div class="hero-actions">
+        <a href="#shoots" class="btn btn-solid">Order of Shoot</a>
+        <a href="#ideas" class="btn btn-ghost">Visit the Mood Board</a>
+      </div>
+      <div class="hero-scroll" aria-hidden="true">Scroll</div>
+    </section>
+
+    <!-- ============ ORDER OF SHOOT ============ -->
+    <section class="section shoots" id="shoots">
+      <div class="section-head">
+        <span class="section-index">01</span>
+        <h2 class="section-title">Order of Shoot</h2>
+        <p class="section-desc">The running sequence — from the first outing to launch day.</p>
+      </div>
+
+      <ol class="timeline">
+        <li class="timeline-item is-done">
+          <div class="timeline-marker" aria-hidden="true">
+            <span class="dot"></span>
+            <span class="rail"></span>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-meta">
+              <span class="step">Step 01</span>
+              <span class="status status-done">Done</span>
+            </div>
+            <h3>Picnic Shoot</h3>
+            <p>The opener. Soft light, open air, first looks on camera.</p>
+          </div>
+        </li>
+
+        <li class="timeline-item is-next">
+          <div class="timeline-marker" aria-hidden="true">
+            <span class="dot"></span>
+            <span class="rail"></span>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-meta">
+              <span class="step">Step 02</span>
+              <span class="status status-next">Next up</span>
+            </div>
+            <h3>Skateboard Community</h3>
+            <p>Street energy meets GH styling — shooting with the skate crew.</p>
+          </div>
+        </li>
+
+        <li class="timeline-item">
+          <div class="timeline-marker" aria-hidden="true">
+            <span class="dot"></span>
+            <span class="rail"></span>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-meta">
+              <span class="step">Step 03</span>
+              <span class="status status-tbd">TBD</span>
+            </div>
+            <h3>To Be Determined</h3>
+            <p>Slot open — drop your concept on the Idea Board.</p>
+          </div>
+        </li>
+
+        <li class="timeline-item">
+          <div class="timeline-marker" aria-hidden="true">
+            <span class="dot"></span>
+            <span class="rail"></span>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-meta">
+              <span class="step">Step 04</span>
+              <span class="status">Upcoming</span>
+            </div>
+            <h3>Pre-Launch</h3>
+            <p>Teasers, first drops, and building anticipation.</p>
+          </div>
+        </li>
+
+        <li class="timeline-item is-final">
+          <div class="timeline-marker" aria-hidden="true">
+            <span class="dot"></span>
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-meta">
+              <span class="step">Step 05</span>
+              <span class="status">Upcoming</span>
+            </div>
+            <h3>Launch</h3>
+            <p>Glamour House opens its doors.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============ MOOD BOARD ============ -->
+    <section class="section mood" id="ideas">
+      <div class="section-head">
+        <span class="section-index">02</span>
+        <h2 class="section-title">Mood Board</h2>
+        <p class="section-desc">
+          Four quadrants. Click one to open it full-screen, then click anywhere on the board to drop a sticky note. Saved in your browser for now.
+        </p>
+      </div>
+
+      <div class="quad-grid" id="quad-grid">
+        <button class="quad" type="button" data-quad="pictures">
+          <span class="quad-index">01</span>
+          <span class="quad-name">Pictures</span>
+          <span class="quad-count" data-count="pictures">0 notes</span>
+          <span class="quad-hint">Click to open →</span>
+        </button>
+        <button class="quad" type="button" data-quad="videos">
+          <span class="quad-index">02</span>
+          <span class="quad-name">Videos</span>
+          <span class="quad-count" data-count="videos">0 notes</span>
+          <span class="quad-hint">Click to open →</span>
+        </button>
+        <button class="quad" type="button" data-quad="bts">
+          <span class="quad-index">03</span>
+          <span class="quad-name">Behind the Scenes</span>
+          <span class="quad-count" data-count="bts">0 notes</span>
+          <span class="quad-hint">Click to open →</span>
+        </button>
+        <button class="quad" type="button" data-quad="graphics">
+          <span class="quad-index">04</span>
+          <span class="quad-name">Graphics</span>
+          <span class="quad-count" data-count="graphics">0 notes</span>
+          <span class="quad-hint">Click to open →</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ============ MOOD BOARD — FULLSCREEN ============ -->
+    <div class="board-full" id="board-full" hidden aria-hidden="true">
+      <div class="board-bar">
+        <span class="board-bar-index" id="board-bar-index">01</span>
+        <h3 class="board-bar-name" id="board-bar-name">Pictures</h3>
+        <span class="board-bar-hint">Click anywhere to pin a note · Esc to close</span>
+        <button class="board-close" type="button" id="board-close" aria-label="Close board">✕</button>
+      </div>
+      <div class="board-surface" id="board-surface">
+        <div class="board-empty" id="board-empty">Nothing here yet — click anywhere to pin the first note.</div>
+        <form class="note-composer" id="note-composer" hidden autocomplete="off">
+          <input type="text" id="note-input" class="note-input" placeholder="Write your note…" maxlength="140" required />
+          <div class="note-composer-row">
+            <button type="submit" class="btn btn-solid btn-sm">Pin it</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="note-cancel">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============ GH × CUFS ============ -->
+    <section class="section cufs" id="cufs">
+      <div class="section-head">
+        <span class="section-index">03</span>
+        <h2 class="section-title">Glamour House <span class="x">×</span> CUFS</h2>
+        <p class="section-desc">The collaboration chapter. Details dropping soon.</p>
+      </div>
+
+      <div class="cufs-banner">
+        <div class="cufs-lockup">
+          <span class="cufs-logo">GH</span>
+          <span class="cufs-x">×</span>
+          <span class="cufs-logo cufs-logo-alt">CUFS</span>
+        </div>
+        <p class="cufs-copy">
+          Two creative worlds, one shoot. Concept, casting, and campaign details will be revealed here first.
+        </p>
+        <span class="cufs-badge">Announcement loading…</span>
+      </div>
+    </section>
+
+    <!-- ============ LAUNCH ============ -->
+    <section class="section launch" id="launch">
+      <div class="section-head">
+        <span class="section-index">04</span>
+        <h2 class="section-title">Launch</h2>
+        <p class="section-desc">The final step of the order. You'll know when it happens.</p>
+      </div>
+
+      <div class="launch-panel">
+        <div class="countdown" id="countdown" aria-label="Launch countdown">
+          <div class="count-block"><span class="count-num" data-unit="days">00</span><span class="count-label">Days</span></div>
+          <div class="count-block"><span class="count-num" data-unit="hours">00</span><span class="count-label">Hours</span></div>
+          <div class="count-block"><span class="count-num" data-unit="mins">00</span><span class="count-label">Mins</span></div>
+          <div class="count-block"><span class="count-num" data-unit="secs">00</span><span class="count-label">Secs</span></div>
+        </div>
+        <p class="launch-note" id="launch-note">Set a date in <code>script.js</code> to start the countdown — until then, the board fills and the shoots roll.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-brand">
+      <span class="brand-mark">GH</span>
+      <span>Glamour House</span>
+    </div>
+    <p class="footer-tag">Fashion-inclined people, one house.</p>
+    <a href="#top" class="footer-top">Back to top ↑</a>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

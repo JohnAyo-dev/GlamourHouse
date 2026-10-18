@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Glamour House | Modelling Agency</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Jost:wght@300;400;500&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f8f3ec; --surface:#fffaf2; --ink:#1a120a; --muted:#6b5a45; --accent:#8a6508; --on-accent:#fff; --gold:#a07a0c; --line:#dccfb8; --brown:#4a2a0a; --g1:#8a6a0a; --g2:#f2c500; --g3:#c9a227;
+  --serif:'Cinzel','Trajan Pro',Georgia,serif; --sans:'Jost','Optima',system-ui,-apple-system,'Segoe UI',sans-serif;
+  color-scheme:light;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#1a120a;--surface:#271b0f;--ink:#f6ecd9;--muted:#bfae92;--accent:#e8b923;--on-accent:#1a120a;--gold:#e8b923;--line:#4a3a22;--brown:#7a4a14;--g1:#c9a227;--g2:#ffe066;--g3:#e8b923;color-scheme:dark}
+}
+:root[data-theme="dark"]{--bg:#1a120a;--surface:#271b0f;--ink:#f6ecd9;--muted:#bfae92;--accent:#e8b923;--on-accent:#1a120a;--gold:#e8b923;--line:#4a3a22;--brown:#7a4a14;--g1:#c9a227;--g2:#ffe066;--g3:#e8b923;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;font-size:17px}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:20px clamp(20px,5vw,64px);gap:16px;flex-wrap:wrap}
+nav b{font-family:var(--serif);font-size:1.25rem;font-weight:800}
+nav div{display:flex;gap:22px;font-size:.95rem}
+nav a{text-decoration:none;color:var(--muted)}
+nav a:hover{color:var(--accent)}
+.hero{padding:clamp(40px,9vw,120px) clamp(20px,5vw,64px) clamp(48px,8vw,100px);border-bottom:1px solid var(--line)}
+.hero{text-align:center}
+.mono{position:relative;display:inline-flex;align-items:flex-end;font-family:var(--serif);font-size:clamp(6rem,24vw,13rem);line-height:.9;font-weight:700;padding-right:.2em}
+.mono .mg,.mono .mh{display:block;background:linear-gradient(180deg,var(--g2),var(--g1) 60%,var(--g3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;filter:drop-shadow(.025em .025em 0 var(--brown))}
+.mono .mh{font-size:.62em;margin-left:-.22em}
+.mono .gem{position:absolute;width:.2em;right:.02em;top:.12em}
+.hero h1{font-family:var(--serif);font-weight:700;text-transform:uppercase;font-size:clamp(1.5rem,6.2vw,3.6rem);letter-spacing:.04em;line-height:1.1;margin:18px 0 0;background:linear-gradient(180deg,var(--g2),var(--g1) 60%,var(--g3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+.hero .sub{font-weight:300;text-transform:uppercase;letter-spacing:.38em;font-size:clamp(.85rem,2.4vw,1.4rem);color:var(--ink);margin:14px 0 0;padding-left:.38em}
+.hero .intro{max-width:46ch;font-size:1.15rem;color:var(--muted);margin:34px auto 0}
+section{padding:clamp(48px,8vw,100px) clamp(20px,5vw,64px)}
+h2{font-family:var(--serif);font-size:clamp(2rem,5vw,3.4rem);margin:0 0 12px;font-weight:500;line-height:1.1}
+.lead{color:var(--muted);max-width:56ch;margin:0 0 40px}
+ol.shoots{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+ol.shoots li{display:grid;grid-template-columns:clamp(56px,10vw,120px) 1fr auto;align-items:baseline;gap:16px;padding:22px 0;border-bottom:1px solid var(--line)}
+.n{font-family:var(--serif);font-size:clamp(2.2rem,6vw,4.4rem);color:var(--gold);line-height:1}
+.t{font-family:var(--serif);font-size:clamp(1.3rem,3vw,2rem)}
+.t small{display:block;font-family:var(--sans);font-size:.9rem;color:var(--muted);margin-top:2px}
+.tag{font-size:.85rem;border:1px solid var(--line);border-radius:99px;padding:3px 12px;color:var(--muted);white-space:nowrap}
+li.next .tag{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+li.launch .t{color:var(--accent)}
+.how{list-style:none;margin:44px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+.how li{border-left:2px solid var(--gold);padding:2px 0 2px 14px;color:var(--muted)}
+.how b{display:block;color:var(--ink);font-family:var(--serif);font-size:1.1rem;margin-bottom:2px}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.tile{position:relative;aspect-ratio:3/4;border:1px solid var(--line);border-radius:6px 20px 6px 20px;overflow:hidden;background:linear-gradient(160deg,var(--surface),var(--line))}
+.tile:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:auto}
+.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tile span{position:absolute;left:14px;bottom:12px;font-family:var(--serif);font-size:1.1rem;color:var(--ink)}
+.tile{cursor:pointer}
+#lightbox{border:0;padding:0;background:transparent;max-width:min(92vw,900px);width:100%;color:var(--ink)}
+#lightbox::backdrop{background:rgba(20,6,26,.78)}
+.lb-box{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:6px 24px 6px 24px;padding:14px;max-height:88vh;display:flex;flex-direction:column;gap:10px}
+.lb-box img{max-width:100%;max-height:72vh;object-fit:contain;border-radius:4px;align-self:center}
+.lb-ph{aspect-ratio:3/4;max-height:72vh;align-self:center;width:min(100%,460px);background:linear-gradient(160deg,var(--surface),var(--line));border-radius:4px;display:flex;align-items:flex-end;padding:20px;font-family:var(--serif);font-size:1.8rem}
+.lb-cap{margin:0;font-family:var(--serif);font-size:1.2rem;padding:0 6px}
+.lb-close{position:absolute;top:10px;right:10px;background:var(--accent);color:var(--on-accent);border:0;border-radius:99px;padding:8px 16px;font:inherit;font-weight:600;cursor:pointer}
+.gtools{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:24px}
+.gtools small{color:var(--muted)}
+.board{background:var(--surface);border-block:1px solid var(--line)}
+.add{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px}
+.add input,.add select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.add input{flex:1 1 260px}
+.add button,.btn{font:inherit;font-weight:600;background:var(--accent);color:var(--on-accent);border:0;border-radius:10px;padding:12px 22px;cursor:pointer}
+.add button:hover,.btn:hover{filter:brightness(1.1)}
+.lanes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg)}
+.lane{display:flex;flex-direction:column;gap:14px;padding:18px;min-height:420px;border-left:1px solid var(--line)}
+.lane:first-child{border-left:0}
+.lane h3{font-family:var(--serif);font-weight:800;font-size:1.4rem;margin:0;color:var(--accent)}
+.lane .add{margin:0;flex-direction:column;flex-wrap:nowrap}
+.lane .add input,.lane .add select,.lane .add button{width:100%;min-width:0;flex:none}
+.notes{display:flex;flex-direction:column;gap:12px}
+@media(max-width:1000px){.lanes{grid-template-columns:repeat(2,minmax(0,1fr))}.lane:nth-child(3){border-left:0}.lane:nth-child(n+3){border-top:1px solid var(--line)}}
+@media(max-width:560px){.lanes{grid-template-columns:1fr}.lane{border-left:0;border-top:1px solid var(--line);min-height:0}.lane:first-child{border-top:0}}
+.note{position:relative;color:#2b1a2e;padding:26px 16px 12px;display:flex;flex-direction:column;gap:10px;min-height:120px;border-radius:2px 2px 14px 2px;box-shadow:0 8px 14px rgba(0,0,0,.22),inset 0 -18px 24px rgba(0,0,0,.05);transition:transform .2s}
+.note::before{content:"";position:absolute;top:-9px;left:50%;width:64px;height:20px;margin-left:-32px;background:rgba(255,255,255,.55);box-shadow:0 1px 3px rgba(0,0,0,.15);transform:rotate(-2deg)}
+.note:hover{transform:rotate(0deg) scale(1.03)!important}
+.c0{background:#ffe66d}.c1{background:#ffb3d1}.c2{background:#b8f0c8}.c3{background:#b7d9ff}.c4{background:#ffd0a6}
+.note p{margin:0;flex:1;font-family:'Caveat','Bradley Hand','Comic Sans MS',cursive;font-size:1.5rem;line-height:1.15;overflow-wrap:anywhere}
+.note span{font-size:.8rem;color:#5a3a5e;font-weight:600}
+.note button{align-self:flex-end;background:none;border:0;color:#5a3a5e;cursor:pointer;font:inherit;font-size:.8rem;text-decoration:underline}
+.empty{color:var(--muted)}
+.collab{display:grid;gap:40px;grid-template-columns:1fr;align-items:center}
+@media(min-width:800px){.collab{grid-template-columns:1.1fr 1fr}}
+.x{font-family:var(--serif);font-size:clamp(3rem,10vw,7rem);font-weight:800;line-height:1}
+.x i{color:var(--accent);font-weight:500;padding:0 .15em}
+.join-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.role{background:var(--surface);border:1px solid var(--line);border-radius:6px 20px 6px 20px;padding:24px;display:flex;flex-direction:column;gap:8px}
+.role h3{font-family:var(--serif);font-size:1.7rem;margin:0;font-weight:800}
+.role p{margin:0;color:var(--muted)}
+.role b{color:var(--accent);margin-top:auto;padding-top:12px;font-size:.95rem}
+@media(max-width:800px){.join-grid{grid-template-columns:1fr}}
+footer{padding:36px clamp(20px,5vw,64px);color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+@media(max-width:560px){ol.shoots li{grid-template-columns:48px 1fr}.tag{grid-column:2;justify-self:start}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<nav>
+  <b>GH</b>
+  <div><a href="#shoots">Shoots</a><a href="#gallery">Gallery</a><a href="#ideas">Idea Board</a><a href="#cufs">GH x CUFS</a><a href="#join">Join Us</a></div>
+</nav>
+
+<header class="hero">
+  <div class="mono" aria-hidden="true"><span class="mg">G</span><span class="mh">H</span><svg class="gem" viewBox="0 0 24 20"><path d="M5 1h14l5 6-12 12L0 7z" fill="var(--g3)" stroke="var(--brown)" stroke-width="1"/><path d="M0 7h24M8 1l-2 6 6 12M16 1l2 6-6 12" fill="none" stroke="var(--brown)" stroke-width=".6"/></svg></div>
+  <h1>The Glamour House</h1>
+  <p class="sub">Modelling Agency</p>
+  <p class="intro">A home for people who live fashion. We shoot, we style, we build the look together, one set at a time.</p>
+</header>
+
+<section id="shoots">
+  <h2>The shoot order</h2>
+  <p class="lead">Six shoots, in this order. Every shoot starts with a moodboard.</p>
+  <ol class="shoots">
+    <li class="next"><span class="n">1</span><span class="t">Pre-Launch<small>Met Gala themed college shoot with Demilade.</small></span><span class="tag">Up first</span></li>
+    <li class="launch"><span class="n">2</span><span class="t">Launch<small>With CUFS. Go crazy.</small></span><span class="tag">The big one</span></li>
+    <li><span class="n">3</span><span class="t">Skating Community<small>Street style with the skate crowd.</small></span><span class="tag">Planned</span></li>
+    <li><span class="n">4</span><span class="t">Picnic, medieval<small>1 male, 1 female, possibly a chef.</small></span><span class="tag">Planned</span></li>
+    <li><span class="n">5</span><span class="t">Runway shoot<small>Next half.</small></span><span class="tag">Planned</span></li>
+    <li><span class="n">6</span><span class="t">Campaign and promotion<small>With Toba and Feranmi for LORE, a streetwear brand.</small></span><span class="tag">Planned</span></li>
+  </ol>
+  <ul class="how">
+    <li><b>Moodboards</b>Each shoot gets one, to speed up and guide the shots, videography, behind-the-scenes and editing.</li>
+    <li><b>Photos, then video</b>We take the photos first, then the videos.</li>
+    <li><b>Staying active</b>We keep going through Omega Semester and IT.</li>
+    <li><b>Short films</b>We hope to branch into fashion-based short films.</li>
+    <li><b>Bring your people</b>Know someone fashion-inclined? Bring them to the shoots.</li>
+  </ul>
+</section>
+
+<section id="gallery">
+  <h2>Gallery</h2>
+  <p class="lead">Frames from each shoot will land here as they are ready.</p>
+  <div class="gtools">
+    <label class="btn" for="gfiles" style="display:inline-block">Preview photos</label>
+    <input id="gfiles" type="file" accept="image/*" multiple hidden>
+    <small>Photos you add show on this device only and are not uploaded.</small>
+  </div>
+  <div class="gallery" id="gallery-grid">
+    <div class="tile"><span>Picnic shoot</span></div>
+    <div class="tile"><span>Skateboard Community</span></div>
+    <div class="tile"><span>Behind the scenes</span></div>
+    <div class="tile"><span>Pre-Launch</span></div>
+    <div class="tile"><span>Launch</span></div>
+  </div>
+</section>
+
+<section id="ideas" class="board">
+  <h2>Idea Board</h2>
+  <p class="lead">Four lanes, one for each kind of content. Pin your idea in the lane it belongs to and pick the shoot it is for.</p>
+  <div class="lanes" id="lanes"></div>
+</section>
+
+<section id="cufs">
+  <div class="collab">
+    <div class="x">GH<i>x</i>CUFS</div>
+    <div>
+      <h2>Glamour House x CUFS</h2>
+      <p class="lead">A collaboration between the House and CUFS, and our launch shoot is with them. Details, dates and how to get involved will be posted here.</p>
+      <a class="btn" href="#ideas" style="text-decoration:none;display:inline-block">Pin a collab idea</a>
+    </div>
+  </div>
+</section>
+
+<section id="join">
+  <h2>Join Us</h2>
+  <p class="lead">Glamour House is built by the people in it. Pick the group you fit into.</p>
+  <div class="join-grid">
+    <div class="role"><h3>Models</h3><p>You love the clothes and the camera. Join the cast for our shoots.</p><b>Open to all shoots</b></div>
+    <div class="role"><h3>Crew</h3><p>Photographers, videographers, stylists, makeup artists, editors and designers.</p><b>Behind the lens and the scenes</b></div>
+    <div class="role"><h3>Others</h3><p>Not a model or crew? Tell us what you bring and we will find a place for it.</p><b>Everyone is welcome</b></div>
+  </div>
+</section>
+
+<dialog id="lightbox" aria-label="Photo viewer">
+  <div class="lb-box"><button class="lb-close" id="lb-close" type="button">Close</button><div id="lb-body"></div><p class="lb-cap" id="lb-cap"></p></div>
+</dialog>
+
+<footer>The Glamour House, Modelling Agency. Pinned ideas stay on this device only.</footer>
+
+<script>
+/* Idea Board: keeps ideas in memory and mirrors them to localStorage when it is available */
+var KEY='gh-ideas', ideas=[];
+try{ var saved=localStorage.getItem(KEY); if(saved) ideas=JSON.parse(saved)||[]; }catch(e){ ideas=[]; }
+var COLS=['Picture','Video','Behind-the-Scenes','Graphics'];
+var SHOOTS=['Pre-Launch','Launch','Skating Community','Picnic, medieval','Runway shoot','Campaign and promotion','Any shoot'];
+var lists={}, inputs={}, selects={};
+var lanesEl=document.getElementById('lanes');
+/* Older ideas saved before the lanes existed go into Picture */
+ideas.forEach(function(it){ if(COLS.indexOf(it.col)<0) it.col='Picture'; });
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(ideas)); }catch(e){} }
+/* Build the four lanes once, each with its own heading, form and note list */
+COLS.forEach(function(col){
+  var lane=document.createElement('div'); lane.className='lane';
+  var h=document.createElement('h3'); h.textContent=col;
+  var form=document.createElement('div'); form.className='add';
+  var inp=document.createElement('input'); inp.type='text'; inp.maxLength=200; inp.placeholder='Add a '+col.toLowerCase()+' idea'; inp.setAttribute('aria-label',col+' idea');
+  var sel=document.createElement('select'); sel.setAttribute('aria-label','Shoot for '+col+' idea');
+  SHOOTS.forEach(function(s){ var o=document.createElement('option'); o.textContent=s; sel.appendChild(o); });
+  var btn=document.createElement('button'); btn.type='button'; btn.textContent='Pin to '+col;
+  var list=document.createElement('div'); list.className='notes'; list.setAttribute('aria-live','polite');
+  btn.onclick=function(){ pin(col); };
+  inp.addEventListener('keydown',function(e){ if(e.key==='Enter') pin(col); });
+  form.appendChild(inp); form.appendChild(sel); form.appendChild(btn);
+  lane.appendChild(h); lane.appendChild(form); lane.appendChild(list); lanesEl.appendChild(lane);
+  lists[col]=list; inputs[col]=inp; selects[col]=sel;
+});
+/* Redraw only the note lists so typing in a lane is never interrupted */
+function render(){
+  COLS.forEach(function(col){
+    var list=lists[col]; list.innerHTML='';
+    var mine=ideas.filter(function(it){ return it.col===col; });
+    if(!mine.length){
+      var p=document.createElement('p'); p.className='empty'; p.textContent='Nothing here yet.'; list.appendChild(p); return;
+    }
+    mine.forEach(function(it,k){
+      var d=document.createElement('div'); d.className='note c'+((it.text.length+k)%5); d.style.transform='rotate('+(((it.text.length%5)-2)*1.4)+'deg)';
+      var t=document.createElement('p'); t.textContent=it.text;
+      var s=document.createElement('span'); s.textContent=it.shoot;
+      var b=document.createElement('button'); b.type='button'; b.textContent='Remove';
+      b.onclick=function(){ ideas.splice(ideas.indexOf(it),1); save(); render(); };
+      d.appendChild(t); d.appendChild(s); d.appendChild(b); list.appendChild(d);
+    });
+  });
+}
+function pin(col){
+  var box=inputs[col], v=box.value.trim();
+  if(!v){ box.focus(); return; }
+  ideas.unshift({text:v, shoot:selects[col].value, col:col});
+  box.value=''; save(); render(); box.focus();
+}
+render();
+/* Gallery: photos picked here are shown straight from the device and never uploaded */
+document.getElementById('gfiles').addEventListener('change',function(e){
+  var grid=document.getElementById('gallery-grid');
+  Array.prototype.forEach.call(e.target.files,function(f){
+    var tile=document.createElement('div'); tile.className='tile'; tile.tabIndex=0;
+    var img=document.createElement('img'); img.alt=f.name; img.src=URL.createObjectURL(f);
+    tile.appendChild(img); grid.insertBefore(tile,grid.firstChild);
+  });
+  e.target.value='';
+});
+/* Pop-up viewer: clicking (or pressing Enter on) a gallery tile opens it large in a dialog */
+var lb=document.getElementById('lightbox'), lbBody=document.getElementById('lb-body'), lbCap=document.getElementById('lb-cap');
+var gridEl=document.getElementById('gallery-grid');
+Array.prototype.forEach.call(gridEl.children,function(t){ t.tabIndex=0; });
+function openTile(tile){
+  lbBody.innerHTML='';
+  var img=tile.querySelector('img'), label=tile.querySelector('span');
+  if(img){
+    var big=document.createElement('img'); big.src=img.src; big.alt=img.alt; lbBody.appendChild(big); lbCap.textContent=img.alt;
+  } else {
+    var ph=document.createElement('div'); ph.className='lb-ph'; ph.textContent=label?label.textContent:''; lbBody.appendChild(ph);
+    lbCap.textContent='Photos for this shoot are coming soon.';
+  }
+  if(lb.showModal) lb.showModal(); else lb.setAttribute('open','');
+}
+gridEl.addEventListener('click',function(e){ var t=e.target.closest('.tile'); if(t) openTile(t); });
+gridEl.addEventListener('keydown',function(e){
+  if(e.key==='Enter'||e.key===' '){ var t=e.target.closest('.tile'); if(t){ e.preventDefault(); openTile(t); } }
+});
+document.getElementById('lb-close').onclick=function(){ lb.close(); };
+lb.addEventListener('click',function(e){ if(e.target===lb) lb.close(); });
+</script>
+</body>
+</html>

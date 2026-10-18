@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Glamour House — GH</title>
   <meta name="description" content="Glamour House (GH) — a home for fashion-inclined people. Shoots, ideas, and what's coming next." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet" />
@@ -41,8 +42,9 @@
       <div class="hero-actions">
         <a href="#shoots" class="btn btn-solid">Order of Shoot</a>
         <a href="#ideas" class="btn btn-ghost">Visit the Mood Board</a>
+        <a href="#instagram" class="btn btn-ghost">See More</a>
       </div>
-      <div class="hero-scroll" aria-hidden="true">Scroll</div>
+      <!-- <div class="hero-scroll" aria-hidden="true">Scroll</div> -->
     </section>
 
     <!-- ============ ORDER OF SHOOT ============ -->
@@ -51,6 +53,18 @@
         <span class="section-index">01</span>
         <h2 class="section-title">Order of Shoot</h2>
         <p class="section-desc">The running sequence — from the first outing to launch day.</p>
+      </div>
+
+      <div class="shoot-showcase" aria-label="Glamour House shoot photos">
+        <div class="shoot-slideshow" id="shoot-slideshow" aria-roledescription="carousel" aria-label="GH photo slideshow">
+          <div class="shoot-slides" id="shoot-slides"></div>
+          <div class="shoot-slide-shade" aria-hidden="true"></div>
+          <div class="shoot-slide-caption"><span class="shoot-slide-kicker">GH / ON SET</span><span class="shoot-slide-count" id="shoot-slide-count" aria-live="polite"></span></div>
+          <button class="shoot-slide-control shoot-slide-prev" type="button" aria-label="Previous photo">←</button>
+          <button class="shoot-slide-control shoot-slide-next" type="button" aria-label="Next photo">→</button>
+          <div class="shoot-slide-dots" id="shoot-slide-dots" aria-label="Choose a photo"></div>
+        </div>
+        <p class="shoot-showcase-note">A glimpse into the Glamour House story.</p>
       </div>
 
       <ol class="timeline">
@@ -136,35 +150,36 @@
         <span class="section-index">02</span>
         <h2 class="section-title">Mood Board</h2>
         <p class="section-desc">
-          Four quadrants. Click one to open it full-screen, then click anywhere on the board to drop a sticky note. Saved in your browser for now.
+          One whiteboard, four quadrants. Click a quadrant to open it full-screen, then click anywhere to pin a sticky note. Saved in your browser for now.
         </p>
       </div>
 
-      <div class="quad-grid" id="quad-grid">
-        <button class="quad" type="button" data-quad="pictures">
-          <span class="quad-index">01</span>
-          <span class="quad-name">Pictures</span>
-          <span class="quad-count" data-count="pictures">0 notes</span>
-          <span class="quad-hint">Click to open →</span>
-        </button>
-        <button class="quad" type="button" data-quad="videos">
-          <span class="quad-index">02</span>
-          <span class="quad-name">Videos</span>
-          <span class="quad-count" data-count="videos">0 notes</span>
-          <span class="quad-hint">Click to open →</span>
-        </button>
-        <button class="quad" type="button" data-quad="bts">
-          <span class="quad-index">03</span>
-          <span class="quad-name">Behind the Scenes</span>
-          <span class="quad-count" data-count="bts">0 notes</span>
-          <span class="quad-hint">Click to open →</span>
-        </button>
-        <button class="quad" type="button" data-quad="graphics">
-          <span class="quad-index">04</span>
-          <span class="quad-name">Graphics</span>
-          <span class="quad-count" data-count="graphics">0 notes</span>
-          <span class="quad-hint">Click to open →</span>
-        </button>
+      <div class="whiteboard">
+        <div class="quad-grid" id="quad-grid">
+          <button class="quad" type="button" data-quad="pictures">
+            <span class="quad-name">Pictures</span>
+            <span class="quad-count" data-count="pictures">0 notes</span>
+          </button>
+          <button class="quad" type="button" data-quad="videos">
+            <span class="quad-name">Videos</span>
+            <span class="quad-count" data-count="videos">0 notes</span>
+          </button>
+          <button class="quad" type="button" data-quad="bts">
+            <span class="quad-name">Behind the Scenes</span>
+            <span class="quad-count" data-count="bts">0 notes</span>
+          </button>
+          <button class="quad" type="button" data-quad="graphics">
+            <span class="quad-name">Graphics</span>
+            <span class="quad-count" data-count="graphics">0 notes</span>
+          </button>
+        </div>
+        <div class="wb-tray" aria-hidden="true">
+          <span class="wb-marker wb-m-blue"></span>
+          <span class="wb-marker wb-m-red"></span>
+          <span class="wb-marker wb-m-green"></span>
+          <span class="wb-marker wb-m-black"></span>
+          <span class="wb-eraser"></span>
+        </div>
       </div>
     </section>
 
@@ -185,6 +200,13 @@
             <button type="button" class="btn btn-ghost btn-sm" id="note-cancel">Cancel</button>
           </div>
         </form>
+      </div>
+      <div class="wb-tray wb-tray-full" aria-hidden="true">
+        <span class="wb-marker wb-m-blue"></span>
+        <span class="wb-marker wb-m-red"></span>
+        <span class="wb-marker wb-m-green"></span>
+        <span class="wb-marker wb-m-black"></span>
+        <span class="wb-eraser"></span>
       </div>
     </div>
 

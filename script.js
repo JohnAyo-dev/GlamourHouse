@@ -3,7 +3,7 @@
 
   /* ================= LAUNCH COUNTDOWN =================
      Set a date below (local time). Leave as null to show the "no date yet" note. */
-  const LAUNCH_DATE = "2026-05-12T10:00:00"; // e.g. new Date("2027-01-15T10:00:00")
+  const LAUNCH_DATE = new Date("2026-12-05T10:00:00"); // e.g. new Date("2027-01-15T10:00:00")
 
   /* ================= MOOD BOARD ================= */
   const MOOD_KEY = "gh_mood_v2";
@@ -224,6 +224,112 @@
 
   updateCounts();
 
+  /* ================= GH PHOTO SLIDESHOW =================
+     Add new GH photos to assets/images/GH and include them in images.json. */
+  const slideTrack = document.getElementById("shoot-slides");
+  const slideDots = document.getElementById("shoot-slide-dots");
+  const slideCount = document.getElementById("shoot-slide-count");
+  const slideshow = document.getElementById("shoot-slideshow");
+  if (slideTrack && slideshow) {
+    const fallbackPhotos = ["GH1.jpg", "GH2.jpg", "GH3.jpg", "GH4.jpg"].map((file, i) => ({ src: "assets/images/GH/" + file, alt: "Glamour House shoot photo " + (i + 1) }));
+    let photos = fallbackPhotos;
+    let activeSlide = 0;
+    let slideTimer;
+    let lightbox;
+    let lightboxImage;
+    let lightboxCount;
+    function showSlide(index) {
+      activeSlide = (index + photos.length) % photos.length;
+      slideTrack.querySelectorAll(".shoot-slide").forEach((slide, i) => {
+        slide.classList.toggle("is-active", i === activeSlide);
+        slide.setAttribute("aria-hidden", i === activeSlide ? "false" : "true");
+      });
+      slideDots.querySelectorAll("button").forEach((dot, i) => {
+        dot.classList.toggle("is-active", i === activeSlide);
+        dot.setAttribute("aria-current", i === activeSlide ? "true" : "false");
+      });
+      slideCount.textContent = String(activeSlide + 1).padStart(2, "0") + " / " + String(photos.length).padStart(2, "0");
+      if (lightbox && !lightbox.hidden) {
+        lightboxImage.src = photos[activeSlide].src;
+        lightboxImage.alt = photos[activeSlide].alt || "Glamour House shoot photo " + (activeSlide + 1);
+        lightboxCount.textContent = slideCount.textContent;
+      }
+    }
+    function restartTimer() {
+      window.clearInterval(slideTimer);
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) slideTimer = window.setInterval(() => showSlide(activeSlide + 1), 5000);
+    }
+    function renderSlides() {
+      slideTrack.replaceChildren();
+      slideDots.replaceChildren();
+      photos.forEach((photo, i) => {
+        const slide = document.createElement("figure");
+        slide.className = "shoot-slide";
+        const img = document.createElement("img");
+        img.src = photo.src;
+        img.alt = photo.alt || "Glamour House shoot photo " + (i + 1);
+        img.loading = i === 0 ? "eager" : "lazy";
+        slide.appendChild(img);
+        slideTrack.appendChild(slide);
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.setAttribute("aria-label", "Show photo " + (i + 1));
+        dot.addEventListener("click", () => { showSlide(i); restartTimer(); });
+        slideDots.appendChild(dot);
+      });
+      showSlide(0);
+      slideshow.querySelectorAll(".shoot-slide-control").forEach((button) => { button.hidden = photos.length < 2; });
+      slideDots.hidden = photos.length < 2;
+      if (photos.length > 1) restartTimer();
+    }
+    slideshow.querySelector(".shoot-slide-prev").addEventListener("click", () => { showSlide(activeSlide - 1); restartTimer(); });
+    slideshow.querySelector(".shoot-slide-next").addEventListener("click", () => { showSlide(activeSlide + 1); restartTimer(); });
+    slideshow.addEventListener("mouseenter", () => window.clearInterval(slideTimer));
+    slideshow.addEventListener("mouseleave", restartTimer);
+    slideshow.addEventListener("focusin", () => window.clearInterval(slideTimer));
+    slideshow.addEventListener("focusout", restartTimer);
+    lightbox = document.createElement("div");
+    lightbox.className = "shoot-lightbox";
+    lightbox.hidden = true;
+    lightbox.setAttribute("role", "dialog");
+    lightbox.setAttribute("aria-modal", "true");
+    lightbox.setAttribute("aria-label", "Expanded Glamour House slideshow");
+    lightbox.innerHTML = '<button class="lightbox-close" type="button" aria-label="Close expanded slideshow">×</button><button class="lightbox-arrow lightbox-prev" type="button" aria-label="Previous photo">←</button><img class="lightbox-image" alt=""><button class="lightbox-arrow lightbox-next" type="button" aria-label="Next photo">→</button><span class="lightbox-count" aria-live="polite"></span>';
+    document.body.appendChild(lightbox);
+    lightboxImage = lightbox.querySelector(".lightbox-image");
+    lightboxCount = lightbox.querySelector(".lightbox-count");
+    const closeLightbox = () => {
+      lightbox.hidden = true;
+      document.body.classList.remove("lightbox-open");
+      restartTimer();
+      slideshow.querySelector(".shoot-slide.is-active img")?.focus();
+    };
+    const openLightbox = () => {
+      lightbox.hidden = false;
+      document.body.classList.add("lightbox-open");
+      window.clearInterval(slideTimer);
+      showSlide(activeSlide);
+      lightbox.querySelector(".lightbox-close").focus();
+    };
+    slideTrack.addEventListener("click", (event) => {
+      if (event.target.closest("img")) openLightbox();
+    });
+    lightbox.querySelector(".lightbox-close").addEventListener("click", closeLightbox);
+    lightbox.querySelector(".lightbox-prev").addEventListener("click", () => showSlide(activeSlide - 1));
+    lightbox.querySelector(".lightbox-next").addEventListener("click", () => showSlide(activeSlide + 1));
+    lightbox.addEventListener("click", (event) => { if (event.target === lightbox) closeLightbox(); });
+    document.addEventListener("keydown", (event) => {
+      if (lightbox.hidden) return;
+      if (event.key === "Escape") closeLightbox();
+      if (event.key === "ArrowLeft") showSlide(activeSlide - 1);
+      if (event.key === "ArrowRight") showSlide(activeSlide + 1);
+    });
+    fetch("assets/images/GH/images.json").then((r) => r.ok ? r.json() : fallbackPhotos).then((items) => {
+      if (Array.isArray(items) && items.length && items.every((item) => item && typeof item.src === "string")) photos = items;
+      renderSlides();
+    }).catch(renderSlides);
+  }
+
   /* ================= COUNTDOWN ================= */
   const countdown = document.getElementById("countdown");
   const launchNote = document.getElementById("launch-note");
@@ -253,7 +359,7 @@
 
   /* ================= SCROLL REVEAL ================= */
   const revealTargets = document.querySelectorAll(
-    ".section-head, .timeline-item, .idea-form, .idea-filters, .cufs-banner, .launch-panel"
+    ".section-head, .timeline-item, .whiteboard, .cufs-banner, .launch-panel"
   );
   revealTargets.forEach((el) => el.classList.add("reveal"));
 

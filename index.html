@@ -28,6 +28,7 @@
     <!-- Discover the Star . Develop the Craft . Deliver the Glamour -->
     <nav class="site-nav" aria-label="Primary">
       <a href="#shoots">Shoots</a>
+      <a href="#models">Models</a>
       <a href="#ideas">Mood Board</a>
       <a href="#cufs">GH × CUFS</a>
       <a href="#launch" class="nav-cta">Launch</a>
@@ -67,19 +68,19 @@
       </div>
 
       <div class="shoot-showcase" aria-label="Glamour House shoot photos">
-        <div class="shoot-slideshow" id="shoot-slideshow" aria-roledescription="carousel" aria-label="GH photo slideshow">
-          <div class="shoot-slides" id="shoot-slides"></div>
-          <div class="shoot-slide-shade" aria-hidden="true"></div>
-          <div class="shoot-slide-caption"><span class="shoot-slide-kicker">GH / ON SET</span><span class="shoot-slide-count" id="shoot-slide-count" aria-live="polite"></span></div>
-          <button class="shoot-slide-control shoot-slide-prev" type="button" aria-label="Previous photo">←</button>
-          <button class="shoot-slide-control shoot-slide-next" type="button" aria-label="Next photo">→</button>
-          <div class="shoot-slide-dots" id="shoot-slide-dots" aria-label="Choose a photo"></div>
+        <div class="model-gallery shoot-gallery" id="shoot-gallery" aria-live="polite" aria-roledescription="carousel" aria-label="GH photo slideshow">
+          <div class="model-gallery-track" id="shoot-gallery-track"></div>
+          <div class="model-gallery-shade" aria-hidden="true"></div>
+          <div class="model-gallery-caption"><span class="shoot-gallery-kicker">GH / ON SET</span><span class="model-gallery-count" id="shoot-gallery-count"></span></div>
+          <button class="model-gallery-control model-gallery-prev" type="button" aria-label="Previous photo">←</button>
+          <button class="model-gallery-control model-gallery-next" type="button" aria-label="Next photo">→</button>
+          <div class="model-gallery-dots" id="shoot-gallery-dots" aria-label="Choose a photo"></div>
         </div>
         <p class="shoot-showcase-note">A glimpse into the Glamour House story.</p>
       </div>
 
       <ol class="timeline">
-        <li class="timeline-item is-done">
+        <li class="timeline-item is-next">
           <div class="timeline-marker" aria-hidden="true">
             <span class="dot"></span>
             <span class="rail"></span>
@@ -102,7 +103,7 @@
           <div class="timeline-card">
             <div class="timeline-meta">
               <span class="step">Step 02</span>
-              <span class="status status-upcoming">Next up</span>
+              <span class="status status-next">Next up</span>
             </div>
             <h3>Skateboard Community</h3>
             <p>Street energy meets GH styling — shooting with the skate crew.</p>
@@ -155,10 +156,34 @@
       </ol>
     </section>
 
+    <!-- ============ MEET THE MODELS ============ -->
+    <section class="section models" id="models">
+      <div class="section-head">
+        <span class="section-index">02</span>
+        <h2 class="section-title">Meet The Models</h2>
+        <p class="section-desc">Meet the faces in the Glamour House story. Select a name or browse the model carousel.</p>
+      </div>
+      <div class="models-layout">
+        <ol class="model-list" id="model-list" aria-label="Models">
+          <li><button class="model-select is-active" type="button" data-model="Adasa" aria-expanded="true"><span class="model-number">01</span><span class="model-name">Adasa</span><span class="model-arrow" aria-hidden="true">↗</span></button></li>
+          <li><button class="model-select" type="button" data-model="Alege" aria-expanded="false"><span class="model-number">02</span><span class="model-name">Alege</span><span class="model-arrow" aria-hidden="true">↗</span></button></li>
+          <li><button class="model-select" type="button" data-model="Chioma" aria-expanded="false"><span class="model-number">03</span><span class="model-name">Chioma</span><span class="model-arrow" aria-hidden="true">↗</span></button></li>
+        </ol>
+        <div class="model-gallery" id="model-gallery" aria-live="polite">
+          <div class="model-gallery-track" id="model-gallery-track"></div>
+          <div class="model-gallery-shade" aria-hidden="true"></div>
+          <div class="model-gallery-caption"><span id="model-gallery-name">Adasa</span><span class="model-gallery-count" id="model-gallery-count"></span></div>
+          <button class="model-gallery-control model-gallery-prev" type="button" aria-label="Previous shoot photo">←</button>
+          <button class="model-gallery-control model-gallery-next" type="button" aria-label="Next shoot photo">→</button>
+          <div class="model-gallery-dots" id="model-gallery-dots" aria-label="Choose a shoot photo"></div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ MOOD BOARD ============ -->
     <section class="section mood" id="ideas">
       <div class="section-head">
-        <span class="section-index">02</span>
+        <span class="section-index">03</span>
         <h2 class="section-title">Mood Board</h2>
         <p class="section-desc">
           One whiteboard, four quadrants. Click a quadrant to open it full-screen, then click anywhere to pin a sticky note. Saved in your browser for now.
@@ -224,7 +249,7 @@
     <!-- ============ GH × CUFS ============ -->
     <section class="section cufs" id="cufs">
       <div class="section-head">
-        <span class="section-index">03</span>
+        <span class="section-index">04</span>
         <h2 class="section-title">Glamour House <span class="x">×</span> CUFS</h2>
         <p class="section-desc">The collaboration chapter. Details dropping soon.</p>
       </div>
@@ -245,7 +270,7 @@
     <!-- ============ LAUNCH ============ -->
     <section class="section launch" id="launch">
       <div class="section-head">
-        <span class="section-index">04</span>
+        <span class="section-index">05</span>
         <h2 class="section-title">Launch</h2>
         <p class="section-desc">The final step of the order. You'll know when it happens.</p>
       </div>

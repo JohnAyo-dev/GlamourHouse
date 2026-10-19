@@ -15,7 +15,7 @@
     bts: "Behind the Scenes",
     graphics: "Graphics",
   };
-  const NOTE_COLORS = ["#ffe66d", "#ffb3d1", "#b8f0c8", "#b7d9ff", "#ffd0a6"];
+  const NOTE_COLORS = ["#f2e6c9", "#f2d8d4", "#dce6d6", "#e5dfd0", "#eadce9"];
 
   const quadGrid = document.getElementById("quad-grid");
   const boardFull = document.getElementById("board-full");
@@ -225,109 +225,229 @@
   updateCounts();
 
   /* ================= GH PHOTO SLIDESHOW =================
-     Add new GH photos to assets/images/GH and include them in images.json. */
-  const slideTrack = document.getElementById("shoot-slides");
-  const slideDots = document.getElementById("shoot-slide-dots");
-  const slideCount = document.getElementById("shoot-slide-count");
-  const slideshow = document.getElementById("shoot-slideshow");
-  if (slideTrack && slideshow) {
-    const fallbackPhotos = ["GH1.jpg", "GH2.jpg", "GH3.jpg", "GH4.jpg"].map((file, i) => ({ src: "assets/images/GH/" + file, alt: "Glamour House shoot photo " + (i + 1) }));
-    let photos = fallbackPhotos;
-    let activeSlide = 0;
-    let slideTimer;
-    let lightbox;
-    let lightboxImage;
-    let lightboxCount;
-    function showSlide(index) {
-      activeSlide = (index + photos.length) % photos.length;
-      slideTrack.querySelectorAll(".shoot-slide").forEach((slide, i) => {
-        slide.classList.toggle("is-active", i === activeSlide);
-        slide.setAttribute("aria-hidden", i === activeSlide ? "false" : "true");
+     Runs on the same carousel as the model gallery and is fed straight from
+     assets/images/GH: the folder is listed via the GitHub API (any file
+     names), then scanned as GH1, GH2… as backup. Drop new images into the
+     folder and they appear — no manifest to edit. */
+  const shootGallery = document.getElementById("shoot-gallery");
+  const shootGalleryTrack = document.getElementById("shoot-gallery-track");
+  const shootGalleryDots = document.getElementById("shoot-gallery-dots");
+  const shootGalleryCount = document.getElementById("shoot-gallery-count");
+  if (shootGallery && shootGalleryTrack) {
+    const fallbackPhotos = ["GH1.jpg", "GH2.jpg", "GH3.jpg", "GH4.jpg", "GH5.jpg", "GH6.jpg", "GH7.jpg", "GH8.jpg", "GH9.jpg", "GH10.jpg", "GH11.jpg"].map((file, i) => ({ src: "assets/images/GH/" + file, alt: "Glamour House shoot photo " + (i + 1) }));
+    let shootPhotos = fallbackPhotos;
+    let shootSlide = 0;
+    let shootTimer;
+    function showShootSlide(index) {
+      if (!shootPhotos.length) return;
+      shootSlide = (index + shootPhotos.length) % shootPhotos.length;
+      shootGalleryTrack.querySelectorAll(".model-gallery-slide").forEach((slide, i) => {
+        slide.classList.toggle("is-active", i === shootSlide);
+        slide.setAttribute("aria-hidden", i === shootSlide ? "false" : "true");
       });
-      slideDots.querySelectorAll("button").forEach((dot, i) => {
-        dot.classList.toggle("is-active", i === activeSlide);
-        dot.setAttribute("aria-current", i === activeSlide ? "true" : "false");
+      shootGalleryDots.querySelectorAll("button").forEach((dot, i) => {
+        dot.classList.toggle("is-active", i === shootSlide);
+        dot.setAttribute("aria-current", i === shootSlide ? "true" : "false");
       });
-      slideCount.textContent = String(activeSlide + 1).padStart(2, "0") + " / " + String(photos.length).padStart(2, "0");
-      if (lightbox && !lightbox.hidden) {
-        lightboxImage.src = photos[activeSlide].src;
-        lightboxImage.alt = photos[activeSlide].alt || "Glamour House shoot photo " + (activeSlide + 1);
-        lightboxCount.textContent = slideCount.textContent;
+      shootGalleryCount.textContent = String(shootSlide + 1).padStart(2, "0") + " / " + String(shootPhotos.length).padStart(2, "0");
+    }
+    function restartShootTimer() {
+      window.clearInterval(shootTimer);
+      if (shootPhotos.length > 1 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        shootTimer = window.setInterval(() => showShootSlide(shootSlide + 1), 4800);
       }
     }
-    function restartTimer() {
-      window.clearInterval(slideTimer);
-      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) slideTimer = window.setInterval(() => showSlide(activeSlide + 1), 5000);
-    }
-    function renderSlides() {
-      slideTrack.replaceChildren();
-      slideDots.replaceChildren();
-      photos.forEach((photo, i) => {
+    function renderShootPhotos() {
+      shootGalleryTrack.replaceChildren();
+      shootGalleryDots.replaceChildren();
+      shootPhotos.forEach((photo, i) => {
         const slide = document.createElement("figure");
-        slide.className = "shoot-slide";
+        slide.className = "model-gallery-slide";
         const img = document.createElement("img");
         img.src = photo.src;
         img.alt = photo.alt || "Glamour House shoot photo " + (i + 1);
         img.loading = i === 0 ? "eager" : "lazy";
         slide.appendChild(img);
-        slideTrack.appendChild(slide);
+        shootGalleryTrack.appendChild(slide);
         const dot = document.createElement("button");
         dot.type = "button";
         dot.setAttribute("aria-label", "Show photo " + (i + 1));
-        dot.addEventListener("click", () => { showSlide(i); restartTimer(); });
-        slideDots.appendChild(dot);
+        dot.addEventListener("click", () => { showShootSlide(i); restartShootTimer(); });
+        shootGalleryDots.appendChild(dot);
       });
-      showSlide(0);
-      slideshow.querySelectorAll(".shoot-slide-control").forEach((button) => { button.hidden = photos.length < 2; });
-      slideDots.hidden = photos.length < 2;
-      if (photos.length > 1) restartTimer();
+      showShootSlide(0);
+      shootGallery.querySelectorAll(".model-gallery-control").forEach((button) => { button.hidden = shootPhotos.length < 2; });
+      shootGalleryDots.hidden = shootPhotos.length < 2;
+      restartShootTimer();
+      shootGallery.classList.remove("is-arriving");
+      requestAnimationFrame(() => shootGallery.classList.add("is-arriving"));
     }
-    slideshow.querySelector(".shoot-slide-prev").addEventListener("click", () => { showSlide(activeSlide - 1); restartTimer(); });
-    slideshow.querySelector(".shoot-slide-next").addEventListener("click", () => { showSlide(activeSlide + 1); restartTimer(); });
-    slideshow.addEventListener("mouseenter", () => window.clearInterval(slideTimer));
-    slideshow.addEventListener("mouseleave", restartTimer);
-    slideshow.addEventListener("focusin", () => window.clearInterval(slideTimer));
-    slideshow.addEventListener("focusout", restartTimer);
-    lightbox = document.createElement("div");
-    lightbox.className = "shoot-lightbox";
-    lightbox.hidden = true;
-    lightbox.setAttribute("role", "dialog");
-    lightbox.setAttribute("aria-modal", "true");
-    lightbox.setAttribute("aria-label", "Expanded Glamour House slideshow");
-    lightbox.innerHTML = '<button class="lightbox-close" type="button" aria-label="Close expanded slideshow">×</button><button class="lightbox-arrow lightbox-prev" type="button" aria-label="Previous photo">←</button><img class="lightbox-image" alt=""><button class="lightbox-arrow lightbox-next" type="button" aria-label="Next photo">→</button><span class="lightbox-count" aria-live="polite"></span>';
-    document.body.appendChild(lightbox);
-    lightboxImage = lightbox.querySelector(".lightbox-image");
-    lightboxCount = lightbox.querySelector(".lightbox-count");
-    const closeLightbox = () => {
-      lightbox.hidden = true;
-      document.body.classList.remove("lightbox-open");
-      restartTimer();
-      slideshow.querySelector(".shoot-slide.is-active img")?.focus();
-    };
-    const openLightbox = () => {
-      lightbox.hidden = false;
-      document.body.classList.add("lightbox-open");
-      window.clearInterval(slideTimer);
-      showSlide(activeSlide);
-      lightbox.querySelector(".lightbox-close").focus();
-    };
-    slideTrack.addEventListener("click", (event) => {
-      if (event.target.closest("img")) openLightbox();
+    shootGallery.querySelector(".model-gallery-prev").addEventListener("click", () => { showShootSlide(shootSlide - 1); restartShootTimer(); });
+    shootGallery.querySelector(".model-gallery-next").addEventListener("click", () => { showShootSlide(shootSlide + 1); restartShootTimer(); });
+    shootGallery.addEventListener("mouseenter", () => window.clearInterval(shootTimer));
+    shootGallery.addEventListener("mouseleave", restartShootTimer);
+    shootGallery.addEventListener("focusin", () => window.clearInterval(shootTimer));
+    shootGallery.addEventListener("focusout", restartShootTimer);
+    const IMG_EXT_RE = /\.(jpe?g|png|webp|gif|avif)$/i;
+    const GH_API = "https://api.github.com/repos/JohnAyo-dev/GlamourHouse/contents/assets/images/GH?ref=master";
+    const NAME_CACHE_KEY = "gh_photos_v1";
+    const NAME_CACHE_TTL = 5 * 60 * 1000;
+    const nameCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
+
+    function cachedNames() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(NAME_CACHE_KEY) || "null");
+        if (raw && Date.now() - raw.t < NAME_CACHE_TTL && Array.isArray(raw.names) && raw.names.length) return raw.names;
+      } catch { /* ignore */ }
+      return null;
+    }
+
+    function storeNames(names) {
+      try {
+        localStorage.setItem(NAME_CACHE_KEY, JSON.stringify({ t: Date.now(), names }));
+      } catch { /* ignore */ }
+    }
+
+    function namesFromGitHub() {
+      return fetch(GH_API)
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error("listing failed"))))
+        .then((items) => {
+          const names = (Array.isArray(items) ? items : [])
+            .filter((item) => item && item.type === "file" && IMG_EXT_RE.test(item.name))
+            .map((item) => item.name)
+            .sort(nameCollator.compare);
+          if (!names.length) throw new Error("empty listing");
+          storeNames(names);
+          return names;
+        });
+    }
+
+    function namesByScanning() {
+      /* Probes GH1.jpg, GH2.jpg … and stops after two numbers in a row are missing. */
+      return new Promise((resolve) => {
+        const exts = ["jpg", "jpeg", "png", "webp"];
+        const names = [];
+        let number = 1;
+        let extIndex = 0;
+        let missedNumbers = 0;
+        const probe = () => {
+          if (missedNumbers >= 2 || number > 80 || (number > 20 && !names.length)) {
+            resolve(names);
+            return;
+          }
+          if (extIndex >= exts.length) {
+            number += 1;
+            extIndex = 0;
+            missedNumbers += 1;
+            probe();
+            return;
+          }
+          const candidate = "GH" + number + "." + exts[extIndex++];
+          const img = new Image();
+          img.onload = () => {
+            missedNumbers = 0;
+            names.push(candidate);
+            probe();
+          };
+          img.onerror = probe;
+          img.src = "assets/images/GH/" + candidate;
+        };
+        probe();
+      });
+    }
+
+    renderShootPhotos();
+    const remembered = cachedNames();
+    (remembered ? Promise.resolve(remembered) : namesFromGitHub().catch(namesByScanning))
+      .then((names) => {
+        shootPhotos = names.length
+          ? names.map((name, i) => ({ src: "assets/images/GH/" + name, alt: "Glamour House shoot photo " + (i + 1) }))
+          : fallbackPhotos;
+        renderShootPhotos();
+      })
+      .catch(() => renderShootPhotos());
+  }
+
+  /* ================= MEET THE MODELS ================= */
+  const modelList = document.getElementById("model-list");
+  const modelGallery = document.getElementById("model-gallery");
+  const modelGalleryTrack = document.getElementById("model-gallery-track");
+  const modelGalleryDots = document.getElementById("model-gallery-dots");
+  const modelGalleryName = document.getElementById("model-gallery-name");
+  const modelGalleryCount = document.getElementById("model-gallery-count");
+  if (modelList && modelGalleryTrack) {
+    let modelPhotos = [];
+    let modelSlide = 0;
+    let modelTimer;
+    function showModelSlide(index) {
+      if (!modelPhotos.length) return;
+      modelSlide = (index + modelPhotos.length) % modelPhotos.length;
+      modelGalleryTrack.querySelectorAll(".model-gallery-slide").forEach((slide, i) => {
+        slide.classList.toggle("is-active", i === modelSlide);
+        slide.setAttribute("aria-hidden", i === modelSlide ? "false" : "true");
+      });
+      modelGalleryDots.querySelectorAll("button").forEach((dot, i) => {
+        dot.classList.toggle("is-active", i === modelSlide);
+        dot.setAttribute("aria-current", i === modelSlide ? "true" : "false");
+      });
+      modelGalleryCount.textContent = String(modelSlide + 1).padStart(2, "0") + " / " + String(modelPhotos.length).padStart(2, "0");
+      const activeName = modelPhotos[modelSlide].name;
+      modelGalleryName.textContent = activeName;
+      modelList.querySelectorAll(".model-select").forEach((button) => {
+        const active = button.dataset.model === activeName;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-expanded", active ? "true" : "false");
+      });
+    }
+    function restartModelTimer() {
+      window.clearInterval(modelTimer);
+      if (modelPhotos.length > 1 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        modelTimer = window.setInterval(() => showModelSlide(modelSlide + 1), 4800);
+      }
+    }
+    function selectModel(button) {
+      modelList.querySelectorAll(".model-select").forEach((item) => {
+        const active = item === button;
+        item.classList.toggle("is-active", active);
+        item.setAttribute("aria-expanded", active ? "true" : "false");
+      });
+      const index = modelPhotos.findIndex((photo) => photo.name === button.dataset.model);
+      showModelSlide(index >= 0 ? index : 0);
+      modelGallery.classList.remove("is-arriving");
+      requestAnimationFrame(() => modelGallery.classList.add("is-arriving"));
+      restartModelTimer();
+    }
+    modelList.querySelectorAll(".model-select").forEach((button) => {
+      button.addEventListener("mouseenter", () => selectModel(button));
+      button.addEventListener("focus", () => selectModel(button));
+      button.addEventListener("click", () => selectModel(button));
     });
-    lightbox.querySelector(".lightbox-close").addEventListener("click", closeLightbox);
-    lightbox.querySelector(".lightbox-prev").addEventListener("click", () => showSlide(activeSlide - 1));
-    lightbox.querySelector(".lightbox-next").addEventListener("click", () => showSlide(activeSlide + 1));
-    lightbox.addEventListener("click", (event) => { if (event.target === lightbox) closeLightbox(); });
-    document.addEventListener("keydown", (event) => {
-      if (lightbox.hidden) return;
-      if (event.key === "Escape") closeLightbox();
-      if (event.key === "ArrowLeft") showSlide(activeSlide - 1);
-      if (event.key === "ArrowRight") showSlide(activeSlide + 1);
-    });
-    fetch("assets/images/GH/images.json").then((r) => r.ok ? r.json() : fallbackPhotos).then((items) => {
-      if (Array.isArray(items) && items.length && items.every((item) => item && typeof item.src === "string")) photos = items;
-      renderSlides();
-    }).catch(renderSlides);
+    modelGallery.querySelector(".model-gallery-prev").addEventListener("click", () => { showModelSlide(modelSlide - 1); restartModelTimer(); });
+    modelGallery.querySelector(".model-gallery-next").addEventListener("click", () => { showModelSlide(modelSlide + 1); restartModelTimer(); });
+    modelGallery.addEventListener("mouseenter", () => window.clearInterval(modelTimer));
+    modelGallery.addEventListener("mouseleave", restartModelTimer);
+    fetch("assets/images/Models/models.json").then((r) => r.ok ? r.json() : []).then((items) => {
+      if (!Array.isArray(items) || !items.length) return;
+      modelPhotos = items.filter((item) => item && typeof item.name === "string" && typeof item.src === "string");
+      modelPhotos.forEach((photo, i) => {
+        const slide = document.createElement("figure");
+        slide.className = "model-gallery-slide";
+        const img = document.createElement("img");
+        img.src = photo.src;
+        img.alt = photo.alt || photo.name + " — Glamour House model";
+        img.loading = i === 0 ? "eager" : "lazy";
+        slide.appendChild(img);
+        modelGalleryTrack.appendChild(slide);
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.setAttribute("aria-label", "Show model " + photo.name);
+        dot.addEventListener("click", () => { showModelSlide(i); restartModelTimer(); });
+        modelGalleryDots.appendChild(dot);
+      });
+      showModelSlide(0);
+      const initialModel = modelList.querySelector(".model-select.is-active") || modelList.querySelector(".model-select");
+      if (initialModel) selectModel(initialModel);
+    }).catch(() => {});
   }
 
   /* ================= COUNTDOWN ================= */

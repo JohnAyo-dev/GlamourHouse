@@ -16,6 +16,10 @@
     graphics: "Graphics",
   };
   const NOTE_COLORS = ["#f2e6c9", "#f2d8d4", "#dce6d6", "#e5dfd0", "#eadce9"];
+  const QUAD_MEDIA = { pictures: "image", graphics: "image", videos: "video", bts: "video" };
+  const MEDIA_LIMIT = 80 * 1024 * 1024;
+  const MEDIA_DB = "gh_media";
+  const MEDIA_STORE = "files";
 
   const quadGrid = document.getElementById("quad-grid");
   const boardFull = document.getElementById("board-full");
@@ -27,6 +31,10 @@
   const composer = document.getElementById("note-composer");
   const noteInput = document.getElementById("note-input");
   const noteCancel = document.getElementById("note-cancel");
+  const noteMediaBtn = document.getElementById("note-media");
+  const mediaInput = document.getElementById("media-input");
+  const boardBarHint = document.getElementById("board-bar-hint");
+  const mediaUrls = new Map();
 
   let activeQuad = null;
   let notes = load(MOOD_KEY, null);
@@ -69,6 +77,50 @@
     });
   }
 
+  /* Media files live in IndexedDB (blobs), notes only keep the reference */
+  function mediaDb() {
+    return new Promise((resolve, reject) => {
+      if (!("indexedDB" in window)) {
+        reject(new Error("indexeddb unavailable"));
+        return;
+      }
+      const request = indexedDB.open(MEDIA_DB, 1);
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        if (!db.objectStoreNames.contains(MEDIA_STORE)) db.createObjectStore(MEDIA_STORE);
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  function mediaPut(id, blob) {
+    return mediaDb().then((db) => new Promise((resolve, reject) => {
+      const tx = db.transaction(MEDIA_STORE, "readwrite");
+      tx.objectStore(MEDIA_STORE).put(blob, id);
+      tx.oncomplete = () => resolve(id);
+      tx.onerror = () => reject(tx.error);
+    }));
+  }
+
+  function mediaGet(id) {
+    return mediaDb().then((db) => new Promise((resolve, reject) => {
+      const tx = db.transaction(MEDIA_STORE, "readonly");
+      const request = tx.objectStore(MEDIA_STORE).get(id);
+      request.onsuccess = () => resolve(request.result || null);
+      request.onerror = () => reject(request.error);
+    }));
+  }
+
+  function mediaDelete(id) {
+    return mediaDb().then((db) => new Promise((resolve) => {
+      const tx = db.transaction(MEDIA_STORE, "readwrite");
+      tx.objectStore(MEDIA_STORE).delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => resolve();
+    })).catch(() => {});
+  }
+
   /* Old idea-card entries become notes pinned in a loose grid on Pictures */
   function migrateLegacy() {
     const legacy = load(LEGACY_KEY, []);
@@ -90,11 +142,39 @@
     QUAD_ORDER.forEach((q) => {
       const count = notes.filter((n) => n.quad === q).length;
       const el = quadGrid.querySelector(`[data-count="${q}"]`);
-      if (el) el.textContent = count === 1 ? "1 note" : `${count} notes`;
+      if (el) el.textContent = count === 1 ? "1 item" : `${count} items`;
     });
   }
 
+  function revokeMediaUrls() {
+    mediaUrls.forEach((url) => URL.revokeObjectURL(url));
+    mediaUrls.clear();
+  }
+
+  function showMediaIn(frame, note) {
+    if (!frame) return;
+    mediaGet(note.mediaId || note.id).then((blob) => {
+      if (!blob || !frame.isConnected) return;
+      const url = URL.createObjectURL(blob);
+      mediaUrls.set(note.id, url);
+      let node;
+      if (note.kind === "video") {
+        node = document.createElement("video");
+        node.controls = true;
+        node.muted = true;
+        node.playsInline = true;
+        node.preload = "metadata";
+      } else {
+        node = document.createElement("img");
+        node.alt = note.name || "Mood board photo";
+      }
+      node.src = url;
+      frame.appendChild(node);
+    }).catch(() => {});
+  }
+
   function renderNotes() {
+    revokeMediaUrls();
     boardSurface.querySelectorAll(".mood-note").forEach((n) => n.remove());
     const mine = notes.filter((n) => n.quad === activeQuad);
     mine.forEach((n) => {
@@ -105,6 +185,18 @@
       el.style.top = n.y + "%";
       el.style.background = n.color;
       el.style.setProperty("--tilt", (n.tilt ?? -1.5) + "deg");
+      if (n.kind === "image" || n.kind === "video") {
+        el.classList.add("is-media");
+        el.innerHTML = `
+          <div class="mood-media-frame"></div>
+          <div class="mood-note-foot">
+            <span class="mood-note-tag">${escapeHtml(n.name || (n.kind === "video" ? "Video" : "Photo"))}</span>
+            <button type="button" class="mood-note-del" aria-label="Remove media">Remove</button>
+          </div>`;
+        boardSurface.appendChild(el);
+        showMediaIn(el.querySelector(".mood-media-frame"), n);
+        return;
+      }
       el.innerHTML = `
         <p>${escapeHtml(n.text)}</p>
         <div class="mood-note-foot">
@@ -120,6 +212,11 @@
     activeQuad = quad;
     boardBarIndex.textContent = String(QUAD_ORDER.indexOf(quad) + 1).padStart(2, "0");
     boardBarName.textContent = QUAD_LABELS[quad];
+    if (boardBarHint) {
+      boardBarHint.textContent = QUAD_MEDIA[quad] === "video"
+        ? "Click anywhere to pin a note or add a video · Esc to close"
+        : "Click anywhere to pin a note or add a photo · Esc to close";
+    }
     boardFull.hidden = false;
     boardFull.setAttribute("aria-hidden", "false");
     document.body.style.overflow = "hidden";
@@ -139,6 +236,7 @@
   }
 
   function showComposer(clientX, clientY) {
+    if (noteMediaBtn) noteMediaBtn.textContent = QUAD_MEDIA[activeQuad] === "video" ? "Add video" : "Add photo";
     const rect = boardSurface.getBoundingClientRect();
     composer.hidden = false;
     const w = composer.offsetWidth;
@@ -158,18 +256,64 @@
     noteInput.value = "";
   }
 
+  /* Pinned position = center of where the composer sat, as % of the surface */
+  function composerCenter() {
+    const rect = boardSurface.getBoundingClientRect();
+    const cx = parseFloat(composer.style.left) + composer.offsetWidth / 2;
+    const cy = parseFloat(composer.style.top) + composer.offsetHeight / 2;
+    return {
+      x: Math.min(92, Math.max(8, (cx / rect.width) * 100)),
+      y: Math.min(90, Math.max(10, (cy / rect.height) * 100)),
+    };
+  }
+
+  function addMediaFiles(fileList) {
+    const kind = QUAD_MEDIA[activeQuad];
+    if (!kind || !fileList || !fileList.length) return;
+    const quad = activeQuad;
+    const base = composerCenter();
+    const all = Array.from(fileList);
+    const files = all.filter((file) => {
+      const type = file.type || "";
+      const rightKind = kind === "video" ? type.startsWith("video/") : type.startsWith("image/");
+      return rightKind && file.size <= MEDIA_LIMIT;
+    });
+    hideComposer();
+    if (files.length < all.length) {
+      window.alert("Some files were skipped — add " + (kind === "video" ? "videos" : "images") + " under 80 MB.");
+    }
+    files.forEach((file, i) => {
+      const id = "media-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 7);
+      mediaPut(id, file).then(() => {
+        const index = notes.length;
+        notes.push({
+          id,
+          quad,
+          kind,
+          mediaId: id,
+          name: file.name,
+          text: "",
+          x: Math.min(92, Math.max(8, base.x + (i % 3) * 7)),
+          y: Math.min(90, Math.max(10, base.y + Math.floor(i / 3) * 9)),
+          color: NOTE_COLORS[index % NOTE_COLORS.length],
+          tilt: (((index * 7) % 5) - 2) * 1.4,
+          tag: "",
+          createdAt: Date.now(),
+        });
+        saveMood();
+        renderNotes();
+        updateCounts();
+      }).catch(() => {});
+    });
+  }
+
   function pinNote() {
     const text = noteInput.value.trim();
     if (!text) {
       noteInput.focus();
       return;
     }
-    /* Note position = center of where the composer sat, as % of the surface */
-    const rect = boardSurface.getBoundingClientRect();
-    const cx = parseFloat(composer.style.left) + composer.offsetWidth / 2;
-    const cy = parseFloat(composer.style.top) + composer.offsetHeight / 2;
-    const x = Math.min(92, Math.max(8, (cx / rect.width) * 100));
-    const y = Math.min(90, Math.max(10, (cy / rect.height) * 100));
+    const { x, y } = composerCenter();
     const i = notes.length;
     notes.push({
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
@@ -198,7 +342,9 @@
   boardSurface.addEventListener("click", (e) => {
     if (e.target.closest(".mood-note-del")) {
       const id = e.target.closest(".mood-note").dataset.id;
+      const gone = notes.find((n) => n.id === id);
       notes = notes.filter((n) => n.id !== id);
+      if (gone && gone.mediaId) mediaDelete(gone.mediaId);
       saveMood();
       renderNotes();
       updateCounts();
@@ -215,6 +361,20 @@
   });
   noteCancel.addEventListener("click", hideComposer);
 
+  if (noteMediaBtn && mediaInput) {
+    noteMediaBtn.addEventListener("click", () => {
+      const kind = QUAD_MEDIA[activeQuad];
+      if (!kind) return;
+      mediaInput.accept = kind + "/*";
+      mediaInput.value = "";
+      mediaInput.click();
+    });
+    mediaInput.addEventListener("change", () => {
+      addMediaFiles(mediaInput.files);
+      mediaInput.value = "";
+    });
+  }
+
   document.addEventListener("keydown", (e) => {
     if (boardFull.hidden) return;
     if (e.key !== "Escape") return;
@@ -224,11 +384,96 @@
 
   updateCounts();
 
+  /* ================= FOLDER PHOTOS (shared) =================
+     Loader for any image folder. It prefers a fresh browser cache, otherwise
+     lists the folder through the GitHub API (any file names; each file is
+     versioned by its blob sha so edits show up), then scans numbered files
+     (prefix1, prefix2…), then a JSON manifest, then the last known list, then
+     inline defaults. Add, remove or replace images in the folder and the
+     galleries follow — no manifest to edit. */
+  const PHOTO_EXT_RE = /\.(jpe?g|png|webp|gif|avif)$/i;
+  const photoCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
+
+  function photoTitle(file) {
+    return file
+      .replace(/\.[^.]+$/, "")
+      .replace(/[_-]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .replace(/(^|\s)([a-z])/g, (match, space, letter) => space + letter.toUpperCase());
+  }
+
+  function loadFolderPhotos(config) {
+    const { folder, api, cacheKey, manifest, prefix = "", ttl = 5 * 60 * 1000, alt, fallback = [] } = config;
+    const readCache = (anyAge) => {
+      try {
+        const raw = JSON.parse(localStorage.getItem(cacheKey) || "null");
+        if (raw && Array.isArray(raw.files) && raw.files.length && (anyAge || Date.now() - raw.t < ttl)) return raw.files;
+      } catch { /* ignore */ }
+      return null;
+    };
+    const writeCache = (files) => {
+      try { localStorage.setItem(cacheKey, JSON.stringify({ t: Date.now(), files })); } catch { /* ignore */ }
+    };
+    const fromApi = () => fetch(api)
+      .then((response) => (response.ok ? response.json() : Promise.reject(new Error("listing failed"))))
+      .then((items) => {
+        const files = (Array.isArray(items) ? items : [])
+          .filter((item) => item && item.type === "file" && PHOTO_EXT_RE.test(item.name))
+          .map((item) => ({ file: item.name, v: item.sha || "" }))
+          .sort((a, b) => photoCollator.compare(a.file, b.file));
+        if (!files.length) throw new Error("empty listing");
+        return files;
+      });
+    const fromScan = () => new Promise((resolve) => {
+      if (!prefix) { resolve([]); return; }
+      const exts = ["jpg", "jpeg", "png", "webp"];
+      const files = [];
+      let number = 1;
+      let extIndex = 0;
+      let missed = 0;
+      const probe = () => {
+        if (missed >= 2 || number > 200 || (number > 20 && !files.length)) { resolve(files); return; }
+        if (extIndex >= exts.length) { number += 1; extIndex = 0; missed += 1; probe(); return; }
+        const candidate = prefix + number + "." + exts[extIndex++];
+        const image = new Image();
+        image.onload = () => { missed = 0; files.push({ file: candidate, v: "" }); probe(); };
+        image.onerror = probe;
+        image.src = folder + candidate;
+      };
+      probe();
+    });
+    const fromManifest = () => {
+      if (!manifest) return Promise.resolve([]);
+      return fetch(manifest)
+        .then((response) => (response.ok ? response.json() : []))
+        .then((items) => (Array.isArray(items) ? items : [])
+          .filter((item) => item && typeof item.name === "string" && typeof item.src === "string")
+          .map((item) => ({ name: item.name, src: item.src, alt: item.alt })))
+        .catch(() => []);
+    };
+    const decorate = (files) => files.map((file, i) => {
+      const name = file.name || photoTitle(file.file);
+      return {
+        name,
+        src: file.src || folder + file.file + (file.v ? "?v=" + file.v : ""),
+        alt: file.alt || (typeof alt === "function" ? alt(name, i) : alt) || name,
+      };
+    });
+
+    const cached = readCache(false);
+    if (cached) return Promise.resolve(decorate(cached));
+
+    return fromApi()
+      .catch(fromScan)
+      .then((files) => (files.length ? (writeCache(files), files) : fromManifest()))
+      .then((files) => (files && files.length ? files : readCache(true) || fallback))
+      .then(decorate);
+  }
+
   /* ================= GH PHOTO SLIDESHOW =================
-     Runs on the same carousel as the model gallery and is fed straight from
-     assets/images/GH: the folder is listed via the GitHub API (any file
-     names), then scanned as GH1, GH2… as backup. Drop new images into the
-     folder and they appear — no manifest to edit. */
+     Runs on the same carousel as the model gallery, fed straight from
+     assets/images/GH — every image in the folder, present and future. */
   const shootGallery = document.getElementById("shoot-gallery");
   const shootGalleryTrack = document.getElementById("shoot-gallery-track");
   const shootGalleryDots = document.getElementById("shoot-gallery-dots");
@@ -288,84 +533,28 @@
     shootGallery.addEventListener("mouseleave", restartShootTimer);
     shootGallery.addEventListener("focusin", () => window.clearInterval(shootTimer));
     shootGallery.addEventListener("focusout", restartShootTimer);
-    const IMG_EXT_RE = /\.(jpe?g|png|webp|gif|avif)$/i;
     const GH_API = "https://api.github.com/repos/JohnAyo-dev/GlamourHouse/contents/assets/images/GH?ref=master";
-    const NAME_CACHE_KEY = "gh_photos_v1";
-    const NAME_CACHE_TTL = 5 * 60 * 1000;
-    const nameCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
-
-    function cachedNames() {
-      try {
-        const raw = JSON.parse(localStorage.getItem(NAME_CACHE_KEY) || "null");
-        if (raw && Date.now() - raw.t < NAME_CACHE_TTL && Array.isArray(raw.names) && raw.names.length) return raw.names;
-      } catch { /* ignore */ }
-      return null;
+    let shootSignature = "";
+    function applyShootPhotos(photos) {
+      if (!photos.length) return;
+      const signature = photos.map((photo) => photo.src).join("|");
+      if (signature === shootSignature) return;
+      shootSignature = signature;
+      shootPhotos = photos;
+      renderShootPhotos();
     }
-
-    function storeNames(names) {
-      try {
-        localStorage.setItem(NAME_CACHE_KEY, JSON.stringify({ t: Date.now(), names }));
-      } catch { /* ignore */ }
-    }
-
-    function namesFromGitHub() {
-      return fetch(GH_API)
-        .then((r) => (r.ok ? r.json() : Promise.reject(new Error("listing failed"))))
-        .then((items) => {
-          const names = (Array.isArray(items) ? items : [])
-            .filter((item) => item && item.type === "file" && IMG_EXT_RE.test(item.name))
-            .map((item) => item.name)
-            .sort(nameCollator.compare);
-          if (!names.length) throw new Error("empty listing");
-          storeNames(names);
-          return names;
-        });
-    }
-
-    function namesByScanning() {
-      /* Probes GH1.jpg, GH2.jpg … and stops after two numbers in a row are missing. */
-      return new Promise((resolve) => {
-        const exts = ["jpg", "jpeg", "png", "webp"];
-        const names = [];
-        let number = 1;
-        let extIndex = 0;
-        let missedNumbers = 0;
-        const probe = () => {
-          if (missedNumbers >= 2 || number > 80 || (number > 20 && !names.length)) {
-            resolve(names);
-            return;
-          }
-          if (extIndex >= exts.length) {
-            number += 1;
-            extIndex = 0;
-            missedNumbers += 1;
-            probe();
-            return;
-          }
-          const candidate = "GH" + number + "." + exts[extIndex++];
-          const img = new Image();
-          img.onload = () => {
-            missedNumbers = 0;
-            names.push(candidate);
-            probe();
-          };
-          img.onerror = probe;
-          img.src = "assets/images/GH/" + candidate;
-        };
-        probe();
-      });
-    }
+    const refreshShootPhotos = () => loadFolderPhotos({
+      folder: "assets/images/GH/",
+      api: GH_API,
+      cacheKey: "gh_photos_v1",
+      prefix: "GH",
+      alt: (name, i) => "Glamour House shoot photo " + (i + 1),
+    }).then(applyShootPhotos);
 
     renderShootPhotos();
-    const remembered = cachedNames();
-    (remembered ? Promise.resolve(remembered) : namesFromGitHub().catch(namesByScanning))
-      .then((names) => {
-        shootPhotos = names.length
-          ? names.map((name, i) => ({ src: "assets/images/GH/" + name, alt: "Glamour House shoot photo " + (i + 1) }))
-          : fallbackPhotos;
-        renderShootPhotos();
-      })
-      .catch(() => renderShootPhotos());
+    refreshShootPhotos();
+    window.setInterval(() => { if (!document.hidden) refreshShootPhotos(); }, 5 * 60 * 1000);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshShootPhotos(); });
   }
 
   /* ================= MEET THE MODELS ================= */
@@ -379,6 +568,7 @@
     let modelPhotos = [];
     let modelSlide = 0;
     let modelTimer;
+    let modelSignature = "";
     function showModelSlide(index) {
       if (!modelPhotos.length) return;
       modelSlide = (index + modelPhotos.length) % modelPhotos.length;
@@ -417,19 +607,12 @@
       requestAnimationFrame(() => modelGallery.classList.add("is-arriving"));
       restartModelTimer();
     }
-    modelList.querySelectorAll(".model-select").forEach((button) => {
-      button.addEventListener("mouseenter", () => selectModel(button));
-      button.addEventListener("focus", () => selectModel(button));
-      button.addEventListener("click", () => selectModel(button));
-    });
-    modelGallery.querySelector(".model-gallery-prev").addEventListener("click", () => { showModelSlide(modelSlide - 1); restartModelTimer(); });
-    modelGallery.querySelector(".model-gallery-next").addEventListener("click", () => { showModelSlide(modelSlide + 1); restartModelTimer(); });
-    modelGallery.addEventListener("mouseenter", () => window.clearInterval(modelTimer));
-    modelGallery.addEventListener("mouseleave", restartModelTimer);
-    fetch("assets/images/Models/models.json").then((r) => r.ok ? r.json() : []).then((items) => {
-      if (!Array.isArray(items) || !items.length) return;
-      modelPhotos = items.filter((item) => item && typeof item.name === "string" && typeof item.src === "string");
-      modelPhotos.forEach((photo, i) => {
+    function renderModels(photos) {
+      modelPhotos = photos;
+      modelGalleryTrack.replaceChildren();
+      modelGalleryDots.replaceChildren();
+      modelList.replaceChildren();
+      photos.forEach((photo, i) => {
         const slide = document.createElement("figure");
         slide.className = "model-gallery-slide";
         const img = document.createElement("img");
@@ -438,16 +621,62 @@
         img.loading = i === 0 ? "eager" : "lazy";
         slide.appendChild(img);
         modelGalleryTrack.appendChild(slide);
+
         const dot = document.createElement("button");
         dot.type = "button";
-        dot.setAttribute("aria-label", "Show model " + photo.name);
+        dot.setAttribute("aria-label", "Show " + photo.name);
         dot.addEventListener("click", () => { showModelSlide(i); restartModelTimer(); });
         modelGalleryDots.appendChild(dot);
+
+        const button = document.createElement("button");
+        button.className = "model-select";
+        button.type = "button";
+        button.dataset.model = photo.name;
+        button.setAttribute("aria-expanded", "false");
+        const number = document.createElement("span");
+        number.className = "model-number";
+        number.textContent = String(i + 1).padStart(2, "0");
+        const name = document.createElement("span");
+        name.className = "model-name";
+        name.textContent = photo.name;
+        const arrow = document.createElement("span");
+        arrow.className = "model-arrow";
+        arrow.setAttribute("aria-hidden", "true");
+        arrow.textContent = "↗";
+        button.append(number, name, arrow);
+        button.addEventListener("mouseenter", () => selectModel(button));
+        button.addEventListener("focus", () => selectModel(button));
+        button.addEventListener("click", () => selectModel(button));
+        const item = document.createElement("li");
+        item.appendChild(button);
+        modelList.appendChild(item);
       });
       showModelSlide(0);
-      const initialModel = modelList.querySelector(".model-select.is-active") || modelList.querySelector(".model-select");
-      if (initialModel) selectModel(initialModel);
-    }).catch(() => {});
+      const first = modelList.querySelector(".model-select");
+      if (first) selectModel(first);
+    }
+    function applyModels(photos) {
+      if (!photos.length) return;
+      const signature = photos.map((photo) => photo.src).join("|");
+      if (signature === modelSignature) return;
+      modelSignature = signature;
+      renderModels(photos);
+    }
+    modelGallery.querySelector(".model-gallery-prev").addEventListener("click", () => { showModelSlide(modelSlide - 1); restartModelTimer(); });
+    modelGallery.querySelector(".model-gallery-next").addEventListener("click", () => { showModelSlide(modelSlide + 1); restartModelTimer(); });
+    modelGallery.addEventListener("mouseenter", () => window.clearInterval(modelTimer));
+    modelGallery.addEventListener("mouseleave", restartModelTimer);
+    const refreshModels = () => loadFolderPhotos({
+      folder: "assets/images/Models/",
+      api: "https://api.github.com/repos/JohnAyo-dev/GlamourHouse/contents/assets/images/Models?ref=master",
+      cacheKey: "gh_models_v1",
+      manifest: "assets/images/Models/models.json",
+      alt: (name) => name + " — Glamour House model",
+    }).then(applyModels);
+
+    refreshModels();
+    window.setInterval(() => { if (!document.hidden) refreshModels(); }, 5 * 60 * 1000);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshModels(); });
   }
 
   /* ================= COUNTDOWN ================= */

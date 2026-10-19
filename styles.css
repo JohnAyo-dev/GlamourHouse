@@ -838,6 +838,39 @@ select {
   color: var(--accent);
 }
 
+/* ---- pinned media (photos & videos) ---- */
+.mood-note.is-media {
+  width: 12.5rem;
+  padding: 0.6rem 0.6rem 0.5rem;
+}
+
+.mood-media-frame {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 2px;
+  background: rgba(19, 18, 17, 0.08);
+}
+
+.mood-media-frame img,
+.mood-media-frame video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #0f0e0d;
+}
+
+.mood-note.is-media .mood-note-foot {
+  margin-top: 0.45rem;
+}
+
+.mood-note.is-media .mood-note-tag {
+  max-width: 8.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* ---- composer (note-in-progress at click point) ---- */
 .note-composer {
   position: absolute;
@@ -872,6 +905,7 @@ select {
 
 .note-composer-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 0.6rem;
 }
@@ -1080,6 +1114,11 @@ select {
   .mood-note {
     width: 9rem;
     padding: 1.3rem 0.7rem 0.7rem;
+  }
+
+  .mood-note.is-media {
+    width: 10.5rem;
+    padding: 0.5rem 0.5rem 0.45rem;
   }
 
   .mood-note p {

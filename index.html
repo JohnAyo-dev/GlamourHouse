@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Glamour House — GH</title>
   <meta name="description" content="Glamour House (GH) — a home for fashion-inclined people. Shoots, ideas, and what's coming next." />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg?v=2" />
+  <link rel="icon" type="image/png" sizes="64x64" href="./favicon.png" />
+  <link rel="shortcut icon" href="./favicon.ico" />
   <script>
     try {
       var t = localStorage.getItem("gh_theme");
@@ -54,7 +56,7 @@
       <div class="hero-actions">
         <a href="#shoots" class="btn btn-solid">Order of Shoot</a>
         <a href="#ideas" class="btn btn-ghost">Visit the Mood Board</a>
-        <a href="#instagram" class="btn btn-ghost">See More</a>
+        <a href="https://www.instagram.com/theglamourhouse_fc/" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">See More</a>
       </div>
       <!-- <div class="hero-scroll" aria-hidden="true">Scroll</div> -->
     </section>
@@ -168,6 +170,11 @@
           <li><button class="model-select is-active" type="button" data-model="Adasa" aria-expanded="true"><span class="model-number">01</span><span class="model-name">Adasa</span><span class="model-arrow" aria-hidden="true">↗</span></button></li>
           <li><button class="model-select" type="button" data-model="Alege" aria-expanded="false"><span class="model-number">02</span><span class="model-name">Alege</span><span class="model-arrow" aria-hidden="true">↗</span></button></li>
           <li><button class="model-select" type="button" data-model="Chioma" aria-expanded="false"><span class="model-number">03</span><span class="model-name">Chioma</span><span class="model-arrow" aria-hidden="true">↗</span></button></li>
+          <li><button class="model-select" type="button" data-model="Demilade" aria-expanded="false"><span class="model-number">04</span><span class="model-name">Demilade</span><span class="model-arrow" aria-hidden="true">↗</span></button></li>
+          <li><button class="model-select" type="button" data-model="Ini" aria-expanded="false"><span class="model-number">05</span><span class="model-name">Ini</span><span class="model-arrow" aria-hidden="true">↗</span></button></li>
+          <li><button class="model-select" type="button" data-model="Jeff" aria-expanded="false"><span class="model-number">06</span><span class="model-name">Jeff</span><span class="model-arrow" aria-hidden="true">↗</span></button></li>
+          <li><button class="model-select" type="button" data-model="JohnAyo" aria-expanded="false"><span class="model-number">07</span><span class="model-name">JohnAyo</span><span class="model-arrow" aria-hidden="true">↗</span></button></li>
+          <li><button class="model-select" type="button" data-model="Samy" aria-expanded="false"><span class="model-number">08</span><span class="model-name">Samy</span><span class="model-arrow" aria-hidden="true">↗</span></button></li>
         </ol>
         <div class="model-gallery" id="model-gallery" aria-live="polite">
           <div class="model-gallery-track" id="model-gallery-track"></div>
@@ -186,7 +193,7 @@
         <span class="section-index">03</span>
         <h2 class="section-title">Mood Board</h2>
         <p class="section-desc">
-          One whiteboard, four quadrants. Click a quadrant to open it full-screen, then click anywhere to pin a sticky note. Saved in your browser for now.
+          One whiteboard, four quadrants. Click a quadrant to open it full-screen, then click anywhere to pin a sticky note — or add photos to Pictures and Graphics, and videos to Videos and Behind the Scenes. Saved in your browser for now.
         </p>
       </div>
 
@@ -224,7 +231,7 @@
       <div class="board-bar">
         <span class="board-bar-index" id="board-bar-index">01</span>
         <h3 class="board-bar-name" id="board-bar-name">Pictures</h3>
-        <span class="board-bar-hint">Click anywhere to pin a note · Esc to close</span>
+        <span class="board-bar-hint" id="board-bar-hint">Click anywhere to pin a note · Esc to close</span>
         <button class="board-close" type="button" id="board-close" aria-label="Close board">✕</button>
       </div>
       <div class="board-surface" id="board-surface">
@@ -233,9 +240,11 @@
           <input type="text" id="note-input" class="note-input" placeholder="Write your note…" maxlength="140" required />
           <div class="note-composer-row">
             <button type="submit" class="btn btn-solid btn-sm">Pin it</button>
+            <button type="button" class="btn btn-ghost btn-sm" id="note-media">Add photo</button>
             <button type="button" class="btn btn-ghost btn-sm" id="note-cancel">Cancel</button>
           </div>
         </form>
+        <input type="file" id="media-input" hidden />
       </div>
       <div class="wb-tray wb-tray-full" aria-hidden="true">
         <span class="wb-marker wb-m-blue"></span>

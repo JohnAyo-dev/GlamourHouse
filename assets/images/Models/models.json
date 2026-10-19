@@ -13,5 +13,30 @@
     "name": "Chioma",
     "src": "assets/images/Models/Chioma.jpg",
     "alt": "Chioma — Glamour House model"
+  },
+  {
+    "name": "Demilade",
+    "src": "assets/images/Models/Demilade.jpg",
+    "alt": "Demilade — Glamour House model"
+  },
+  {
+    "name": "Ini",
+    "src": "assets/images/Models/Ini.jpg",
+    "alt": "Ini — Glamour House model"
+  },
+  {
+    "name": "Jeff",
+    "src": "assets/images/Models/Jeff.jpg",
+    "alt": "Jeff — Glamour House model"
+  },
+  {
+    "name": "JohnAyo",
+    "src": "assets/images/Models/JohnAyo.jpg",
+    "alt": "JohnAyo — Glamour House model"
+  },
+  {
+    "name": "Samy",
+    "src": "assets/images/Models/Samy.jpg",
+    "alt": "Samy — Glamour House model"
   }
 ]

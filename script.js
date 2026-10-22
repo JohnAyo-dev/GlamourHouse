@@ -3,7 +3,7 @@
 
   /* ================= LAUNCH COUNTDOWN =================
      Set a date below (local time). Leave as null to show the "no date yet" note. */
-  const LAUNCH_DATE = new Date("2026-12-05T10:00:00"); // e.g. new Date("2027-01-15T10:00:00")
+  const LAUNCH_DATE = new Date("2026-11-27T10:00:00"); // e.g. new Date("2027-01-15T10:00:00")
 
   /* ================= MOOD BOARD ================= */
   const MOOD_KEY = "gh_mood_v2";
